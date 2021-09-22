@@ -29,29 +29,27 @@ const milestonesReached = await client.query(
 );
 
 export async function announceShowTotals(show_milestone: any) {
-    postData(env.SLACK_WEBHOOK_URL, { text: `${show_milestone.title} heeft momenteel in totaal ${show_milestone.total_listen_count} beluisteringen ` }, false)
+    await postData(env.SLACK_WEBHOOK_URL, { text: `${show_milestone.title} heeft momenteel in totaal ${show_milestone.total_listen_count} beluisteringen ` }, false)
      .then(data => {
-       console.log(data); // JSON data parsed by `data.json()` call
+       console.log(data.status); // JSON data parsed by `data.json()` call
      });
   }
 
 export async function announceShowMilestoneReached(show: any) {
-    postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show.title} heeft de Mijlpaal van ${show.value} beluisteringen gehaald!` }, false)
+    await postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show.title} heeft de Mijlpaal van ${show.value} beluisteringen gehaald!` }, false)
      .then(data => {
-       console.log(data); // JSON data parsed by `data.json()` call
+       console.log(data.status); // JSON data parsed by `data.json()` call
      });
   }
 
 
 export async function announceAllMilestones() {
     for (const show_milestone of milestonesReached) {
-      await announceShowMilestoneReached(show_milestone).then(function(){
-        setTimeout(function(){
-          announceShowTotals(show_milestone)
-        },5);
+      await announceShowMilestoneReached(show_milestone).then(async function(){
+        await announceShowTotals(show_milestone);
       });
     }
-
+    console.log('All milestones announced');
     return true;
   }
 
@@ -75,7 +73,7 @@ export async function postData(url = '', data = {}, parseAsJson = true) {
       return response.json(); // parses JSON response into native JavaScript objects
     }
 
-    console.log(response);
+    console.log(response.status);
 
     return response;
   }
