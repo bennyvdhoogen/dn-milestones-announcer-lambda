@@ -45,7 +45,7 @@ export async function announceShowMilestoneReached(show: any) {
 
 export async function announceAllMilestones() {
     for (const show_milestone of milestonesReached) {
-      announceShowMilestoneReached(show_milestone).then(function(){
+      await announceShowMilestoneReached(show_milestone).then(function(){
         setTimeout(function(){
           announceShowTotals(show_milestone)
         },5);
