@@ -25,7 +25,7 @@ const allShows = await client.query(
 );
 
 const milestonesReached = await client.query(
-  `SELECT a.id as milestone_id, b.id as show_id, b.title, a.value, b.total_listen_count, a.created_at FROM milestones a LEFT JOIN shows b ON a.show_id = b.id WHERE a.type = 'total_listen_count' AND b.total_listen_count >= a.value`
+  `SELECT a.id as milestone_id, b.id as show_id, b.title, a.value, b.total_listen_count, a.created_at FROM milestones a LEFT JOIN shows b ON a.show_id = b.id WHERE a.type = 'total_listen_count' AND b.total_listen_count >= a.value ORDER BY a.value DESC`
 );
 
 export async function announceShowTotals(show_milestone: any) {
@@ -48,10 +48,14 @@ export async function announceShowMilestoneReached(show: any) {
 
 
 export async function announceAllMilestones() {
+    let milestonesAnnouncedInSession: Array<Int16Array> = [];
     for (const show_milestone of milestonesReached) {
-      await announceShowMilestoneReached(show_milestone).then(async function(){
-        await announceShowTotals(show_milestone);
-      });
+      if(!milestonesAnnouncedInSession.includes(show_milestone.show_id)){
+        await announceShowMilestoneReached(show_milestone).then(async function(){
+          await announceShowTotals(show_milestone);
+          milestonesAnnouncedInSession.push(show_milestone.show_id);
+        });
+      }
     }
     console.log('All milestones announced');
     return true;
