@@ -31,14 +31,18 @@ const milestonesReached = await client.query(
 export async function announceShowTotals(show_milestone: any) {
     await postData(env.SLACK_WEBHOOK_URL, { text: `${show_milestone.title} heeft momenteel in totaal ${show_milestone.total_listen_count} beluisteringen ` }, false)
      .then(data => {
-       console.log(data.status); // JSON data parsed by `data.json()` call
+      if(data.status !== 200){
+        console.log(data.status); // JSON data parsed by `data.json()` call
+      }
      });
   }
 
 export async function announceShowMilestoneReached(show: any) {
     await postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show.title} heeft de Mijlpaal van ${show.value} beluisteringen gehaald!` }, false)
      .then(data => {
-       console.log(data.status); // JSON data parsed by `data.json()` call
+        if(data.status !== 200){
+          console.log(data.status); // JSON data parsed by `data.json()` call
+        }
      });
   }
 
@@ -72,8 +76,6 @@ export async function postData(url = '', data = {}, parseAsJson = true) {
     if (parseAsJson) {
       return response.json(); // parses JSON response into native JavaScript objects
     }
-
-    console.log(response.status);
 
     return response;
   }
