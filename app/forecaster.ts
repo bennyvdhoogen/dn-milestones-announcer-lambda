@@ -19,7 +19,7 @@ client.connect({
 
 await client.execute(`USE ${config.DATABASE}`);
 //await client.execute(`SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));`);
-
+// Not allowed in Amazon RDS
 
 export async function getAverageDailyIncrease(){
   const min_amount_of_measurements = 7;
