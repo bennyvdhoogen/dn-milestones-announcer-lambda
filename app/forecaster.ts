@@ -55,9 +55,9 @@ export async function announceUpcomingMilestones() {
       if (nextMilestone) {
         const remainingCount = nextMilestone.next_milestone_value - nextMilestone.current_count;
         const amountOfDaysEstimate = remainingCount / daily_aggregate.average_daily_increase;
+        console.log(`Show (${daily_aggregate.show_id}) will reach the next milestone (${nextMilestone.next_milestone_value}) in ${amountOfDaysEstimate} days`);
         if (amountOfDaysEstimate < 7){
           await announceForecastToSlack(daily_aggregate, nextMilestone, amountOfDaysEstimate);
-          console.log(`Show (${daily_aggregate.show_id}) will reach the next milestone (${nextMilestone.next_milestone_value}) in ${amountOfDaysEstimate} days`);
         }
       }
     }
