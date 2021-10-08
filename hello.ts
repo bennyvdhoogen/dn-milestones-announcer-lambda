@@ -1,4 +1,5 @@
 import * as announcer from './app/announcer.ts';
+import * as forecaster from './app/forecaster.ts';
 
 import {
   APIGatewayProxyEventV2,
@@ -13,6 +14,7 @@ export async function handler(
 ): Promise<APIGatewayProxyResultV2> {
 
   await announcer.announceAllMilestones();
+  await forecaster.announceUpcomingMilestones();
 
   return {
     statusCode: 200,
