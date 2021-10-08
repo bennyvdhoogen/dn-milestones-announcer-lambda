@@ -25,7 +25,7 @@ const allShows = await client.query(
 );
 
 const milestonesReached = await client.query(
-  `SELECT a.id as milestone_id, b.id as show_id, b.title, a.value, b.total_listen_count, a.created_at FROM milestones a LEFT JOIN shows b ON a.show_id = b.id WHERE a.type = 'total_listen_count' AND b.total_listen_count >= a.value ORDER BY a.value DESC`
+  `SELECT a.id as milestone_id, a.announced_at, b.id as show_id, b.title, a.value, b.total_listen_count, a.created_at, (SELECT MAX(value) FROM milestones c WHERE c.show_id = a.show_id AND announced_at IS NOT NULL)  as max_announced FROM milestones a LEFT JOIN shows b ON a.show_id = b.id WHERE a.type = 'total_listen_count' AND b.total_listen_count >= a.value AND a.announced_at IS NULL HAVING (a.value > max_announced OR max_announced IS NULL) ORDER BY a.value DESC;`
 );
 
 export async function announceShowTotals(show_milestone: any) {
@@ -37,11 +37,15 @@ export async function announceShowTotals(show_milestone: any) {
      });
   }
 
-export async function announceShowMilestoneReached(show: any) {
-    await postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show.title} heeft de Mijlpaal van ${show.value} beluisteringen gehaald!` }, false)
-     .then(data => {
-        if(data.status !== 200){
-          console.log(data.status); // JSON data parsed by `data.json()` call
+export async function announceShowMilestoneReached(show_milestone: any) {
+    await postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show_milestone.title} heeft de Mijlpaal van ${show_milestone.value} beluisteringen gehaald!` }, false)
+     .then(async function(data) {
+        if(data.status === 200){
+          await client.execute(`
+            UPDATE milestones SET announced_at = NOW() WHERE id = '${show_milestone.milestone_id}';
+          `);
+        } else {
+          console.log(data);
         }
      });
   }
