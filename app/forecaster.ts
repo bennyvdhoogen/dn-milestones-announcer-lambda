@@ -18,7 +18,7 @@ client.connect({
 });
 
 await client.execute(`USE ${config.DATABASE}`);
-await client.execute(`SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));`);
+//await client.execute(`SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));`);
 
 
 export async function getAverageDailyIncrease(){
@@ -49,12 +49,16 @@ export async function announceUpcomingMilestones() {
     console.log('Calculating time to next milestones..');
 
     for (const daily_aggregate of await getAverageDailyIncrease()) {
+      console.log(daily_aggregate);
       const nextMilestone = await getNextMilestoneByShow(daily_aggregate.show_id);
-      const remainingCount = nextMilestone.next_milestone_value - nextMilestone.current_count;
-      const amountOfDaysEstimate = remainingCount / daily_aggregate.average_daily_increase;
-      if (amountOfDaysEstimate < 7){
-        await announceForecastToSlack(daily_aggregate, nextMilestone, amountOfDaysEstimate);
-        console.log(`Show (${daily_aggregate.show_id}) will reach the next milestone (${nextMilestone.next_milestone_value}) in ${amountOfDaysEstimate} days`);
+      console.log(nextMilestone);
+      if (nextMilestone) {
+        const remainingCount = nextMilestone.next_milestone_value - nextMilestone.current_count;
+        const amountOfDaysEstimate = remainingCount / daily_aggregate.average_daily_increase;
+        if (amountOfDaysEstimate < 7){
+          await announceForecastToSlack(daily_aggregate, nextMilestone, amountOfDaysEstimate);
+          console.log(`Show (${daily_aggregate.show_id}) will reach the next milestone (${nextMilestone.next_milestone_value}) in ${amountOfDaysEstimate} days`);
+        }
       }
     }
     console.log('All milestone forecasts calculated');
