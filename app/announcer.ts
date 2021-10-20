@@ -30,7 +30,8 @@ const milestonesReached = await client.query(
 );
 
 export async function announceShowTotals(show_milestone: any) {
-    await httpClient.postData(env.SLACK_WEBHOOK_URL, { text: `${show_milestone.title} heeft momenteel in totaal ${show_milestone.total_listen_count} beluisteringen ` }, false)
+    const value_formatted = new Intl.NumberFormat('nl-NL').format(show_milestone.total_listen_count);
+    await httpClient.postData(env.SLACK_WEBHOOK_URL, { text: `${show_milestone.title} heeft momenteel in totaal ${value_formatted} beluisteringen ` }, false)
      .then(data => {
       if(data.status !== 200){
         console.log(data.status); // JSON data parsed by `data.json()` call
@@ -39,7 +40,8 @@ export async function announceShowTotals(show_milestone: any) {
   }
 
 export async function announceShowMilestoneReached(show_milestone: any) {
-    await httpClient.postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show_milestone.title} heeft de Mijlpaal van ${show_milestone.value} beluisteringen gehaald!` }, false)
+    const value_formatted = new Intl.NumberFormat('nl-NL').format(show_milestone.value);
+    await httpClient.postData(env.SLACK_WEBHOOK_URL, { text: `:tada: ${show_milestone.title} heeft de Mijlpaal van ${value_formatted} beluisteringen gehaald!` }, false)
      .then(async function(data) {
         if(data.status === 200){
           await client.execute(`
