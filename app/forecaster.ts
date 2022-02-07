@@ -37,7 +37,9 @@ export async function getNextMilestoneByShow(show_id: number){
 }
 
 export async function announceForecastToSlack(daily_aggregate: any, nextMilestone: any, amountOfDaysEstimate: number){
-  await httpClient.postData(env.SLACK_WEBHOOK_URL, { text: `${nextMilestone.show_title} gaat over ongeveer ${amountOfDaysEstimate} dagen de mijlpaal van ${nextMilestone.next_milestone_value} beluisteringen behalen! ` }, false)
+  const amountOfDaysEstimateFormatted = Math.ceil(amountOfDaysEstimate);
+  const next_milestone_value_formatted = new Intl.NumberFormat('nl-NL').format(nextMilestone.next_milestone_value);
+  await httpClient.postData(env.SLACK_WEBHOOK_URL, { text: `${nextMilestone.show_title} gaat over ongeveer ${amountOfDaysEstimateFormatted} dagen de mijlpaal van ${next_milestone_value_formatted} beluisteringen behalen! ` }, false)
      .then(data => {
       if(data.status !== 200){
         console.log(data.status); // JSON data parsed by `data.json()` call
