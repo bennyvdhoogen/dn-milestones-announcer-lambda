@@ -1,8 +1,8 @@
-import { Client } from "https://deno.land/x/mysql/mod.ts";
+import { Client } from "https://deno.land/x/mysql@v2.10.2/mod.ts";
 import * as config from "../config.ts";
 import * as httpClient from "./httpClient.ts";
 import { config as dotEnvConfig } from 'https://deno.land/x/dotenv@v1.0.1/mod.ts';
-import * as emoji from "https://deno.land/x/emoji/mod.ts";
+import * as emoji from "https://deno.land/x/emoji@0.1.2/mod.ts";
 import { XmlEntities } from "https://deno.land/x/html_entities@v1.0/mod.js";
 
 dotEnvConfig({ export: true, path: './.env'});

@@ -1,8 +1,8 @@
-import { Client } from "https://deno.land/x/mysql/mod.ts";
+import { Client } from "https://deno.land/x/mysql@v2.10.2/mod.ts";
 import * as config from "../config.ts";
 import * as httpClient from "./httpClient.ts";
 import { config as dotEnvConfig } from 'https://deno.land/x/dotenv@v1.0.1/mod.ts';
-import * as emoji from "https://deno.land/x/emoji/mod.ts";
+import * as emoji from "https://deno.land/x/emoji@0.1.2/mod.ts";
 import { XmlEntities } from "https://deno.land/x/html_entities@v1.0/mod.js";
 
 dotEnvConfig({ export: true, path: './.env'});
@@ -22,7 +22,7 @@ await client.execute(`USE ${config.DATABASE}`);
 // Not allowed in Amazon RDS
 
 export async function getAverageDailyIncrease(){
-  const min_amount_of_measurements = 7;
+  const min_amount_of_measurements = 1; // Lowered to 1 as of 7 March 2022
   const averageDailyIncreasePerShow = await client.query(
     `SELECT AVG(count) as average_daily_increase, COUNT(show_id) as amount_days_measured, show_id FROM aggregates WHERE type = 'show_listen_count_daily_increase' GROUP BY show_id HAVING amount_days_measured >= ${min_amount_of_measurements}`
   );
